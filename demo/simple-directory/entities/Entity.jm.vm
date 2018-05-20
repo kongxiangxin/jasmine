@@ -1,0 +1,5 @@
+$processor.generate("EntityHolder.vm", "EntityHolder.java", true, $model)
+
+#foreach($table in $model.tables)
+    $processor.generate("Entity.vm", "${table.className}.java", false, $table)
+#end

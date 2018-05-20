@@ -1,0 +1,15 @@
+jdbc.driver=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost:3306/xgift
+jdbc.username=root
+jdbc.password=123
+
+
+tablePrefix = tucao_
+truncatePrefix = true
+
+
+### read column value by ResultSet.getString、 ResultSet.getInt...
+rs.boolean = getBoolean
+rs.Integer = getInt
+rs.java.math.BigDecimal = getBigDecimal
+rs.java.util.Date = getTimestamp
