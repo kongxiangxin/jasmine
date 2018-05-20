@@ -6,6 +6,7 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -19,17 +20,19 @@ import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.jetbrains.annotations.NotNull;
 import org.yidan.idea.plugin.jasmine.dao.MetaDataDao;
 import org.yidan.idea.plugin.jasmine.meta.Database;
 import org.yidan.idea.plugin.jasmine.settings.GenerateSetting;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import static groovyjarjarantlr.build.ANTLR.root;
 
 /**
  * Created by kongxiangxin on 2017/7/31.
@@ -64,17 +67,18 @@ public class GenerateAction extends AnAction implements Logger {
             return;
         }
 
-        Module module = findModule(psiElement);
-        if(module == null || module.getModuleFile() == null){
+//        Module module = findModule(psiElement);
+//        if(module == null || module.getModuleFile() == null){
+//            return;
+//        }
+//        VirtualFile root = module.getModuleFile().getParent();
+
+        VirtualFile currentFile = DataKeys.VIRTUAL_FILE.getData(event.getDataContext());
+        if(currentFile == null){
             return;
         }
 
-        VirtualFile root = module.getModuleFile().getParent();
-
-        if(root == null){
-            return;
-        }
-        VirtualFile configNode = root.findChild("jasmine.property");
+        VirtualFile configNode = findConfigFile(currentFile);
 
         if(configNode == null){
             return;
@@ -91,7 +95,7 @@ public class GenerateAction extends AnAction implements Logger {
 
         GenerateSetting setting = GenerateSetting.getInstance(prop);
 
-        generate(event.getProject(), root, setting);
+        generate(event.getProject(), configNode.getParent(), setting);
 
 //        showMessage(prop.getProperty("name"));
 //
@@ -101,6 +105,17 @@ public class GenerateAction extends AnAction implements Logger {
 //        dir.createFile("tttt.html");
 //        PsiFileFactory.getInstance(event.getProject()).createFileFromText()
 
+    }
+
+    private VirtualFile findConfigFile(VirtualFile current){
+        if(current != null){
+            VirtualFile configFile = current.findChild("jasmine.property");
+            if(configFile != null){
+                return configFile;
+            }
+            return findConfigFile(current.getParent());
+        }
+        return null;
     }
 
     private Module findModule(PsiElement element){
@@ -184,7 +199,7 @@ public class GenerateAction extends AnAction implements Logger {
             showMessage("已经存在一个正在生成的任务了, 请稍后再试...");
         }
         generating = true;
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "jasmine"){
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Jasmine"){
             @Override
             public void run(@NotNull ProgressIndicator progressIndicator) {
                 showMessage("开始生成" + moduleRoot.getName() + "...");
