@@ -63,24 +63,20 @@ public class GenerateAction extends AnAction implements Logger {
     public void actionPerformed(AnActionEvent event) {
         PsiElement psiElement = getCurrentPsiElement(event);
         if(psiElement == null){
-            showMessage("请选择module");
+            showMessage("Please select a node in the project tool window");
             return;
         }
-
-//        Module module = findModule(psiElement);
-//        if(module == null || module.getModuleFile() == null){
-//            return;
-//        }
-//        VirtualFile root = module.getModuleFile().getParent();
 
         VirtualFile currentFile = DataKeys.VIRTUAL_FILE.getData(event.getDataContext());
         if(currentFile == null){
             return;
         }
 
+        //find the jasmine.properties file node
         VirtualFile configNode = findConfigFile(currentFile);
 
         if(configNode == null){
+            showMessage("Cannot found jasmine.properties in '" + currentFile.getName() + "' node's inheritance chain");
             return;
         }
 
@@ -89,7 +85,7 @@ public class GenerateAction extends AnAction implements Logger {
             prop.load(new FileInputStream(configNode.getPath()));
         } catch (IOException e) {
             e.printStackTrace();
-            alert(e.getMessage());
+            showError(e.getMessage());
             return;
         }
 
@@ -97,19 +93,16 @@ public class GenerateAction extends AnAction implements Logger {
 
         generate(event.getProject(), configNode.getParent(), setting);
 
-//        showMessage(prop.getProperty("name"));
-//
-//        VirtualFile test = root.findFileByRelativePath("src/main/java");
-//        PsiDirectory dir = PsiManager.getInstance(event.getProject()).findDirectory(test);
-//
-//        dir.createFile("tttt.html");
-//        PsiFileFactory.getInstance(event.getProject()).createFileFromText()
-
     }
 
+    /**
+     * find the jasmine.properties file node
+     * @param current
+     * @return
+     */
     private VirtualFile findConfigFile(VirtualFile current){
         if(current != null){
-            VirtualFile configFile = current.findChild("jasmine.property");
+            VirtualFile configFile = current.findChild("jasmine.properties");
             if(configFile != null){
                 return configFile;
             }
@@ -118,20 +111,12 @@ public class GenerateAction extends AnAction implements Logger {
         return null;
     }
 
-    private Module findModule(PsiElement element){
-        Module module = ModuleUtilCore.findModuleForPsiElement(element);
-        if(module != null){
-            return module;
-        }
-        return findModule(element.getParent());
-    }
-
-    private void alert(Throwable e){
+    private void showError(Throwable e){
         String message = ExceptionUtils.getFullStackTrace(e);
-        alert(message);
+        showError(message);
     }
 
-    private void alert(String message){
+    public void showError(String message){
         if(message == null){
             return;
         }
@@ -161,7 +146,12 @@ public class GenerateAction extends AnAction implements Logger {
         anActionEvent.getPresentation().setEnabledAndVisible(element != null);
     }
 
-    private List<VirtualFile> findTemplateEntry(Project project, VirtualFile moduleRoot){
+    /**
+     * find template file matches *.jm.vm
+     * @param moduleRoot
+     * @return
+     */
+    private List<VirtualFile> findTemplateEntry(VirtualFile moduleRoot){
         List<VirtualFile> entries = new ArrayList<>();
         VfsUtilCore.visitChildrenRecursively(moduleRoot, new VirtualFileVisitor() {
             @Override
@@ -172,19 +162,7 @@ public class GenerateAction extends AnAction implements Logger {
                 return super.visitFile(file);
             }
         });
-//        VirtualFile[] children = moduleRoot.getChildren();
-//        for(VirtualFile file : children){
-//            if(file.getName().toLowerCase().endsWith(".jm.vm")){
-//                entries.add(file);
-//            }
-//            if(file instanceof VirtualDirectoryImpl){
-//                List<VirtualFile> subEntries = findTemplateEntry(project, file);
-//                entries.addAll(subEntries);
-//            }
-//        }
         return entries;
-
-//        return FilenameIndex.getAllFilesByExt(project, "jm-entry", GlobalSearchScope.moduleScope(ModuleUtilCore.findModuleForFile(moduleRoot, project)));
     }
 
     private void generate(Project project, VirtualFile moduleRoot, GenerateSetting setting){
@@ -192,52 +170,51 @@ public class GenerateAction extends AnAction implements Logger {
             return;
         }
         if(setting == null){
-            alert("未找到配置[module:" + moduleRoot.getName() + "]");
+            showError("Cannot found jasmime.properties[parent:" + moduleRoot.getName() + "]");
             return;
         }
         if(generating){
-            showMessage("已经存在一个正在生成的任务了, 请稍后再试...");
+            showMessage("Another task is executing, just wait...");
         }
         generating = true;
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Jasmine"){
             @Override
             public void run(@NotNull ProgressIndicator progressIndicator) {
-                showMessage("开始生成" + moduleRoot.getName() + "...");
+                showMessage("Generating" + moduleRoot.getName() + "...");
 
                 // start your process
                 try{
-                    PsiManager psiManager = PsiManager.getInstance(project);
                     MetaDataDao dao = new MetaDataDao(setting);
                     Database database = dao.getDatabase();
 
-                    List<VirtualFile> entries = findTemplateEntry(project, moduleRoot);
+                    List<VirtualFile> entries = findTemplateEntry(moduleRoot);
                     if(entries.isEmpty()){
-                        alert("未找到模板[module:" + moduleRoot.getName() + "]");
+                        showError("No template found [module:" + moduleRoot.getName() + "]");
                         return;
                     }
                     // Set the progress bar percentage and text
                     progressIndicator.setFraction(0.10);
-                    progressIndicator.setText("开始生成 " + moduleRoot.getName() + "...");
+                    progressIndicator.setText("Generating " + moduleRoot.getName() + "...");
 
                     int index = 1;
                     for(VirtualFile file : entries){
                         generate(file, database, setting);
                         float percent = index * 1.0f / entries.size();
                         progressIndicator.setFraction(percent);
-                        progressIndicator.setText((int)percent * 100 + "% 已生成...");
+                        progressIndicator.setText((int)percent * 100 + "% has generated...");
                         index ++;
                     }
 
                 }catch (Throwable e){
                     e.printStackTrace();
-                    alert(e);
+                    showError(e);
                 }finally {
                     generating = false;
-                    showMessage("生成结束");
+                    showMessage("Generated");
 
                     // Finished
                     progressIndicator.setFraction(1.0);
-                    progressIndicator.setText("生成结束");
+                    progressIndicator.setText("Generated");
                 }
             }});
 
@@ -247,11 +224,6 @@ public class GenerateAction extends AnAction implements Logger {
         TemplateProcessor processor = new TemplateProcessor(setting, templateEntry, database, this);
         processor.process();;
 
-    }
-
-    @Override
-    public void showError(String message) {
-        alert(message);
     }
 
     @Override
