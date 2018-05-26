@@ -1,6 +1,6 @@
 <idea-plugin version="2">
-  <id>org.yidan.idea.plugin.jasmime</id>
-  <name>jasmime</name>
+  <id>org.yidan.idea.plugin.jasmine</id>
+  <name>jasmine</name>
   <version>1.14</version>
   <vendor email="kongxiangxin@gmail.com" url="">kongxiangxin</vendor>
 
