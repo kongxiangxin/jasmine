@@ -1,13 +1,14 @@
 package org.yidan.idea.plugin.jasmine;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import org.yidan.idea.plugin.jasmine.meta.Database;
-import org.yidan.idea.plugin.jasmine.settings.GenerateSetting;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.jelly.util.FileUtil;
 import org.jelly.util.StringUtil;
+import org.yidan.idea.plugin.jasmine.meta.Database;
+import org.yidan.idea.plugin.jasmine.settings.GenerateSetting;
 
 import java.io.File;
 import java.io.StringWriter;
@@ -30,7 +31,9 @@ public class TemplateProcessor {
         this.logger = logger;
     }
 
-    protected String parseTemplate(String templatePath, Object model) {
+    public TemplateProcessor(){}
+
+    public String parseTemplate(String templatePath, Object model) {
         Thread thread = Thread.currentThread();
         ClassLoader loader = thread.getContextClassLoader();
         thread.setContextClassLoader(this.getClass().getClassLoader());
@@ -65,6 +68,31 @@ public class TemplateProcessor {
         parseTemplate(templateEntry.getPath(), database);
     }
 
+    public void process(String templatePath, Object model){
+        VirtualFile folder = templateEntry.getParent();
+        String basePath = folder.getPath();
+
+        String path = concatPath(basePath, templatePath);
+        parseTemplate(path, model);
+    }
+
+
+    public String concatPath(String basePath, String path){
+        return FilenameUtils.concat(basePath, path);
+
+    }
+
+    public String getProperty(String name, String def){
+        String value = System.getProperty("name");
+        if(value == null){
+            value = System.getenv("name");
+        }
+        if(value == null){
+            return def;
+        }
+        return value;
+    }
+
     public void generate(String templateFile, String outputFile, boolean replaceIfExists, Object model){
         VirtualFile folder = templateEntry.getParent();
 
@@ -73,6 +101,7 @@ public class TemplateProcessor {
         if(output.exists() && !replaceIfExists){
             return;
         }
+
         String templatePath = folder.getPath() + File.separator + templateFile;
         File template = new File(templatePath);
         if(!template.exists()){
@@ -80,25 +109,7 @@ public class TemplateProcessor {
             return;
         }
 
-//        VirtualFile template = folder.findChild(templateFile);
-//        if(template == null){
-//            logger.showError("模板" + templateFile + "不存在");
-//            return;
-//        }
-
         String content = parseTemplate(template.getAbsolutePath(), model);
-
         FileUtil.write(content, output);
-
-//        FileType fileType = FileTypeManager.getInstance().getFileTypeByFileName(outputFile);
-//        if (fileType == FileTypes.UNKNOWN) {
-//            fileType = FileTypeManager.getInstance().getFileTypeByFileName("*.txt");
-//        }
-//
-//
-//
-//        PsiFile ouputPsiFile = PsiFileFactory.getInstance(psiManager.getProject()).createFileFromText(outputFile, fileType, content);
-//
-//        directory.add(ouputPsiFile);
     }
 }
