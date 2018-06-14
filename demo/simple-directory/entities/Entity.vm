@@ -1,5 +1,5 @@
-package com.yidan.module.interactivity.entities;
+package $model.package;
 
-public class ${model.className} extends EntityHolder.${model.className}Base {
-	
+public class ${model.table.className} extends ${model.table.className}Base {
+
 }

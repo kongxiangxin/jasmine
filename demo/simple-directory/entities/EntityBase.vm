@@ -1,0 +1,26 @@
+package $model.package;
+
+## ~~ begin table to static inner class
+public class ${model.table.className}Base {
+
+## ~~ begin column to field
+#foreach($column in $model.table.columns)
+	private $column.javaType $column.fieldName;
+#end
+
+## ~~ begin getter & setter method
+#foreach($column in $model.table.columns)
+#set($get = "get")
+#if($column.javaType == "boolean")
+#set($get = "is")
+#end
+	public $column.javaType $get${column.propertyName}() {
+		return $column.fieldName;
+	}
+
+	public void set${column.propertyName}($column.javaType $column.fieldName) {
+		this.$column.fieldName = $column.fieldName;
+	}
+
+#end
+}
