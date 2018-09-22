@@ -45,6 +45,9 @@ public class TemplateProcessor {
             VelocityEngine engine = new VelocityEngine();
             Properties prop = new Properties();
             prop.put("file.resource.loader.path", templateFileFolder);
+            prop.put("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
+            prop.put("runtime.log.logsystem.log4j.category", "velocity");
+            prop.put("runtime.log.logsystem.log4j.logger", "velocity");
             engine.init(prop);
             Template template = engine.getTemplate(e);
             StringWriter writer = new StringWriter();
