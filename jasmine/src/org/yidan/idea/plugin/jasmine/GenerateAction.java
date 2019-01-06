@@ -180,7 +180,7 @@ public class GenerateAction extends AnAction implements Logger {
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Jasmine"){
             @Override
             public void run(@NotNull ProgressIndicator progressIndicator) {
-                showMessage("Generating" + moduleRoot.getName() + "...");
+                showMessage("Generating " + moduleRoot.getName() + "...");
 
                 // start your process
                 try{
