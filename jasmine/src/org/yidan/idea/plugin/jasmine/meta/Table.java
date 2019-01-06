@@ -12,6 +12,7 @@ public class Table {
     private String className;
     private String remarks;
     private List<Column> columns = new ArrayList<>();
+    private List<Column> pks = new ArrayList<>();
 
     public Table(String rawName, String name, String className, String remarks) {
         this.rawName = rawName;
@@ -22,6 +23,10 @@ public class Table {
 
     public List<Column> getColumns() {
         return this.columns;
+    }
+
+    public List<Column> getPks() {
+        return pks;
     }
 
     public String getName() {
@@ -36,11 +41,15 @@ public class Table {
         return rawName;
     }
 
-    public void addColumn(Column column){
+    public void addColumn(Column column) {
         columns.add(column);
     }
 
     public String getRemarks() {
         return remarks;
+    }
+
+    public void addPK(Column column) {
+        pks.add(column);
     }
 }

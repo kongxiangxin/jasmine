@@ -15,7 +15,7 @@ public interface PostRepositoryBase{
     * @param id
     * @return
     */
-    int delete(String id);
+    int delete(Long id, Long userId);
 
     Post get(String id);
 

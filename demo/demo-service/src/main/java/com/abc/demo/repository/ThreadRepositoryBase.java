@@ -15,7 +15,7 @@ public interface ThreadRepositoryBase{
     * @param id
     * @return
     */
-    int delete(String id);
+    int delete(Long id);
 
     Thread get(String id);
 

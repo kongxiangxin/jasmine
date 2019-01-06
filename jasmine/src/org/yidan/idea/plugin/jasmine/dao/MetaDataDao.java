@@ -15,7 +15,9 @@ import java.sql.DatabaseMetaData;
 import java.sql.JDBCType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by kongxiangxin on 2017/8/1.
@@ -97,6 +99,7 @@ public class MetaDataDao {
                 String remarks = rs.getString("REMARKS");
 
                 Table table = new Table(tableName, mappedName, className, remarks);
+
                 fillColumns(table);
                 database.addTable(table);
             }
@@ -106,7 +109,15 @@ public class MetaDataDao {
     }
 
     private void fillColumns(Table table) throws Throwable {
-        ResultSet rs = this.metaData.getColumns(null, "%", table.getRawName(), "%");
+        ResultSet rs = this.metaData.getPrimaryKeys(null, null, table.getRawName());
+        Set<String> keys = new HashSet<>();
+        while (rs.next()){
+            String column = rs.getString("COLUMN_NAME");
+            keys.add(column);
+        }
+        rs.close();
+
+        rs = this.metaData.getColumns(null, "%", table.getRawName(), "%");
         Map<String, String> typeMapping = setting.getTypeMapping();
         while (rs.next()) {
             String column = rs.getString("COLUMN_NAME");
@@ -124,9 +135,16 @@ public class MetaDataDao {
                     javaType = TypeMapping.dbToJavaType(jdbcType);
                 }
                 String remarks = rs.getString("REMARKS");
-                table.addColumn(new Column(column, typeName, jdbcType, javaType, remarks));
+                Column c = new Column(column, typeName, jdbcType, javaType, remarks);
+                table.addColumn(c);
+
+                if(keys.contains(column)){
+                    table.addPK(c);
+                }
             }
         }
         rs.close();
     }
+
+
 }

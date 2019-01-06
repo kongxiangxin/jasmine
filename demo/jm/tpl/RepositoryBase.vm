@@ -20,7 +20,12 @@ public interface ${model.table.className}RepositoryBase{
     * @param id
     * @return
     */
-    int delete(String id);
+    int delete(##
+#foreach($column in $model.table.pks)##
+$column.javaType ${column.fieldName}##
+#if($foreach.hasNext ), #end##
+#end##
+);
 
     ${model.table.className} get(String id);
 
