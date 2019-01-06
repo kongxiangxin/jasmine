@@ -1,0 +1,47 @@
+server:
+  port: 9000
+  tomcat:
+    uri-encoding: UTF-8
+    remote_ip_header: x-forwarded-for
+    protocol_header: x-forwarded-proto
+    port-header: X-Forwarded-Port
+  servlet:
+    path: /api
+
+spring:
+    profiles:
+      active: dev
+    mvc:
+      throw-exception-if-no-handler-found: true
+      static-path-pattern: /statics/**,classpath*:/META-INF/resources/**,classpath*:/statics/**  #todo:需要深入验证
+    http:
+      encoding:
+        force: true
+        charset: UTF-8
+        enabled: true
+    datasource: # 数据源
+        # 使用druid数据源
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        name: master
+        url: ${db.master.url}
+        username: ${db.master.username}
+        password: ${db.master.password}
+        maxActive: ${db.maxActive}
+        initialSize: ${db.initialSize}
+        maxWait: ${db.maxWait}
+        minIdle: ${db.minIdle}
+        timeBetweenEvictionRunsMillis: ${db.timeBetweenEvictionRunsMillis}
+        minEvictableIdleTimeMillis: ${db.minEvictableIdleTimeMillis}
+        maxOpenPreparedStatements: ${db.maxOpenPreparedStatements}
+        filters: stat,wall,logback
+        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+        useGlobalDataSourceStat: true
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: com.abc.**.entities
