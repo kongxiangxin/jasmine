@@ -1,0 +1,8 @@
+
+#foreach($table in $model.db.tables)
+
+    #set($entityModel = {"table" : $table, "package":$model.package})
+
+    $processor.generate("${model.tplPath}/EntityBase.vm", "${model.targetPath}/${table.className}Base.java", true, $entityModel)
+    $processor.generate("${model.tplPath}/Entity.vm", "${model.targetPath}/${table.className}.java", false, $entityModel)
+#end

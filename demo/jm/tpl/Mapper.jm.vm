@@ -1,0 +1,17 @@
+#foreach($table in $model.db.tables)
+
+    #set($repoModel = {"table" : $table, "entityPkg":$model.entityPkg, "repoPkg": $model.repoPkg})
+
+
+    #foreach($column in $table.columns)##
+        #if($column.name == 'deleted')
+            #set($repoModel.deleteColumn = $column)
+        #end
+        #if($column.name == 'version')
+            #set($repoModel.versionColumn = $column)
+        #end
+    #end
+
+    $processor.generate("${model.tplPath}/MapperBase.vm", "${model.targetPath}/${table.className}MapperBase.xml", true, $repoModel)
+    $processor.generate("${model.tplPath}/Mapper.vm", "${model.targetPath}/${table.className}Mapper.xml", false, $repoModel)
+#end

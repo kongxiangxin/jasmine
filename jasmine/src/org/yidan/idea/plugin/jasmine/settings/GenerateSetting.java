@@ -1,6 +1,7 @@
 package org.yidan.idea.plugin.jasmine.settings;
 
 import io.netty.util.internal.StringUtil;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ public class GenerateSetting {
 
     private String tablePrefix;
     private boolean truncatePrefix;
+    private String tableName;
     private Set<String> excludeTableSet = new HashSet<>();
     private String excludeTables;
     private String excludeColumns;
@@ -24,8 +26,12 @@ public class GenerateSetting {
 
     private Map<String, String> typeMapping = new HashMap<>();
 
+    private Map<String, String> tableNameMapping = new HashMap<>();
+    private Map<String, String> classNameMapping = new HashMap<>();
+
     private Map<String, String> properties = new HashMap<>();
 
+    private String fileEncoding;
 
     public static GenerateSetting getInstance(Properties properties){
         if(properties == null){
@@ -36,8 +42,10 @@ public class GenerateSetting {
         setting.jdbcProperty = JdbcProperty.getInstance(properties);
         setting.tablePrefix = properties.getProperty("tablePrefix");
         setting.truncatePrefix = "true".equals(properties.getProperty("truncatePrefix"));
+        setting.tableName = properties.getProperty("tableName");
         setting.excludeTables = properties.getProperty("excludeTables");
         setting.excludeColumns = properties.getProperty("excludeColumns");
+        setting.fileEncoding = properties.getProperty("fileEncoding");
 
         Enumeration enums = properties.propertyNames();
         while (enums.hasMoreElements()){
@@ -50,6 +58,12 @@ public class GenerateSetting {
                         value = value.replace(" ", "_").toLowerCase();
                     }
                     setting.typeMapping.put(key.substring("typeMapping.".length()), value);
+                }
+                if(key.startsWith("tableNameMapping.")){
+                    setting.tableNameMapping.put(key.substring("tableNameMapping.".length()), value);
+                }
+                if(key.startsWith("classNameMapping.")){
+                    setting.classNameMapping.put(key.substring("classNameMapping.".length()), value);
                 }
             }
 
@@ -96,9 +110,6 @@ public class GenerateSetting {
         if(excludeTableSet.contains(table)){
             return false;
         }
-        if(!StringUtil.isNullOrEmpty(tablePrefix) && !table.startsWith(tablePrefix)){
-            return false;
-        }
         return true;
     }
 
@@ -117,7 +128,23 @@ public class GenerateSetting {
         return properties;
     }
 
+    public Map<String, String> getTableNameMapping() {
+        return tableNameMapping;
+    }
+
+    public Map<String, String> getClassNameMapping() {
+        return classNameMapping;
+    }
+
     public boolean truncatePrefix() {
         return truncatePrefix;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public String getFileEncoding() {
+        return StringUtils.isBlank(fileEncoding) ? "UTF-8" : fileEncoding;
     }
 }

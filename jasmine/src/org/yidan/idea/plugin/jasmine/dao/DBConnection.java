@@ -5,6 +5,7 @@ import org.yidan.idea.plugin.jasmine.settings.JdbcProperty;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * Created by kongxiangxin on 2017/8/1.
@@ -18,6 +19,13 @@ public class DBConnection {
     }
 
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(this.property.getUrl(), this.property.getUsername(), this.property.getPassword());
+        Properties props = new Properties();
+        props.setProperty("remarksReporting", "true");
+        props.setProperty("useInformationSchema", "true");//设置可以获取tables remarks信息
+        props.setProperty("remarks", "true"); //设置可以获取remarks信息
+        props.setProperty("user", this.property.getUsername());
+        props.setProperty("password", this.property.getPassword());
+
+        return DriverManager.getConnection(this.property.getUrl(), props);
     }
 }

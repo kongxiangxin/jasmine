@@ -14,13 +14,15 @@ public class Column {
     private String name;
     private String fieldName;
     private String propertyName;
+    private String remarks;
 
 
-    public Column(String name, String type, JDBCType jdbcType, String javaType) {
+    public Column(String name, String type, JDBCType jdbcType, String javaType, String remarks) {
         this.name = name;
         this.type = type;
         this.jdbcType = jdbcType;
         this.javaType = javaType;
+        this.remarks = remarks;
     }
 
     public String getType() {
@@ -55,5 +57,9 @@ public class Column {
 
     public void setJdbcType(JDBCType jdbcType) {
         this.jdbcType = jdbcType;
+    }
+
+    public String getRemarks() {
+        return remarks;
     }
 }

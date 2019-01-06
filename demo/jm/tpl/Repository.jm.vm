@@ -1,0 +1,16 @@
+#foreach($table in $model.db.tables)
+
+    #set($repoModel = {"table" : $table, "entityPkg":$model.entityPkg, "repoPkg": $model.repoPkg})
+
+    #foreach($column in $table.columns)##
+        #if($column.name == 'deleted')
+            #set($repoModel.deleteColumn = $column)
+        #end
+        #if($column.name == 'version')
+            #set($repoModel.versionColumn = $column)
+        #end
+    #end
+
+    $processor.generate("${model.tplPath}/RepositoryBase.vm", "${model.targetPath}/${table.className}RepositoryBase.java", true, $repoModel)
+    $processor.generate("${model.tplPath}/Repository.vm", "${model.targetPath}/${table.className}Repository.java", false, $repoModel)
+#end

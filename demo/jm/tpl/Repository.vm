@@ -1,0 +1,8 @@
+package $model.repoPkg;
+
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ${model.table.className}Repository extends ${model.table.className}RepositoryBase {
+
+}

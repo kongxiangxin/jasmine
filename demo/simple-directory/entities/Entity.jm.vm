@@ -1,5 +1,0 @@
-#foreach($table in $model.tables)
-    #set($entityModel = {"table" : $table, "package":"com.your.pkg"})
-    $processor.generate("EntityBase.vm", "${table.className}Base.java", true, $entityModel)
-    $processor.generate("Entity.vm", "${table.className}.java", false, $entityModel)
-#end

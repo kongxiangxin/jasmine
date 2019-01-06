@@ -1,0 +1,5 @@
+package $model.package;
+
+public class ${model.table.className} extends ${model.table.className}Base {
+
+}
