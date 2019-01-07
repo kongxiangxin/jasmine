@@ -92,8 +92,11 @@ public class TemplateProcessor {
 
 
     public String concatPath(String basePath, String path){
-        return FilenameUtils.concat(basePath, path);
-
+        String result = FilenameUtils.concat(basePath, path);
+        if(result != null && File.separatorChar == '\\'){
+            result = result.replace(File.separator, "/");
+        }
+        return result;
     }
 
     public String getProperty(String name, String def){
@@ -123,7 +126,12 @@ public class TemplateProcessor {
             return;
         }
 
-        String content = parseTemplate(template.getAbsolutePath(), model);
+        String absolutePath = template.getAbsolutePath();
+        if(File.separatorChar == '\\'){
+            absolutePath = absolutePath.replace(File.separator, "/");
+        }
+
+        String content = parseTemplate(absolutePath, model);
         write(content, output);
     }
 
