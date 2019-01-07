@@ -15,6 +15,7 @@ public class Column {
     private String fieldName;
     private String propertyName;
     private String remarks;
+    private boolean isPK;
 
 
     public Column(String name, String type, JDBCType jdbcType, String javaType, String remarks) {
@@ -61,5 +62,13 @@ public class Column {
 
     public String getRemarks() {
         return remarks;
+    }
+
+    public boolean isPK() {
+        return isPK;
+    }
+
+    public void setPK(boolean PK) {
+        isPK = PK;
     }
 }

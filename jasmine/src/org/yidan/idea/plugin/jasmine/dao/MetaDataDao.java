@@ -139,6 +139,7 @@ public class MetaDataDao {
                 table.addColumn(c);
 
                 if(keys.contains(column)){
+                    c.setPK(true);
                     table.addPK(c);
                 }
             }
