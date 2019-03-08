@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>org.yidan.idea.plugin.jasmine</id>
   <name>jasmine</name>
-  <version>1.171</version>
+  <version>1.172</version>
   <vendor email="kongxiangxin@gmail.com" url="">kongxiangxin</vendor>
 
   <description><![CDATA[
@@ -9,7 +9,7 @@
     ]]></description>
 
   <change-notes><![CDATA[
-
+    add support for postgresql driver
     ]]>
   </change-notes>
 
