@@ -10,11 +10,24 @@ sourceCompatibility = 1.8
 
 repositories {
 //    mavenCentral()
-    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+    maven { url 'https://maven.aliyun.com/repository/public/' }
+    mavenLocal()
+    mavenCentral()
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile("org.apache.commons:commons-lang3:3.3.2")
+    compile("commons-io:commons-io:2.6")
+    compile("commons-collections:commons-collections:3.2.2")
+    runtime("mysql:mysql-connector-java:5.1.17")
+//    runtime group: 'com.oracle', name: 'ojdbc14', version: '10.2.0.4.0'
+//    runtime group: 'com.oracle', name: 'ojdbc14', version: '9.0.2.0.0'
+    runtime files('lib/ojdbc14.jar')
+    runtime group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+    runtime group: 'com.microsoft.sqlserver', name: 'sqljdbc4', version: '4.0'
+    runtime group: 'org.apache.velocity', name: 'velocity', version: '1.7'
+
 }
 
 intellij {
