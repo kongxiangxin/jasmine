@@ -31,10 +31,8 @@ dependencies {
 }
 
 intellij {
-    version '2018.3.1'
+    version '2016.1'
 }
 patchPluginXml {
-    changeNotes """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+    changeNotes """"""
 }
