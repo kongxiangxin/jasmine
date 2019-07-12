@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'org.yidan.idea.plugin'
-version '1.172.1'
+version '1.172.2'
 
 sourceCompatibility = 1.8
 
@@ -34,9 +34,9 @@ intellij {
     version '2016.1'
 }
 patchPluginXml {
-    changeNotes """"""
+    changeNotes "fix bug when type mapping exists"
 }
-publishPlugin {
-    username intellijPublishUsername
-    password intellijPublishPassword
-}
+//publishPlugin {
+//    username intellijPublishUsername
+//    password intellijPublishPassword
+//}

@@ -5,8 +5,12 @@ package org.yidan.idea.plugin.jasmine;
  */
 public interface Logger {
 
-    void showError(String message);
+    void error(String message);
 
-    void showInfo(String message);
+    void error(Exception e);
+
+    void info(String message);
+
+    void setProgress(double percent);
 
 }

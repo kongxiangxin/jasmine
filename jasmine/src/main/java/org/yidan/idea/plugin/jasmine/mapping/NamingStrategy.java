@@ -1,6 +1,6 @@
 package org.yidan.idea.plugin.jasmine.mapping;
 
-import io.netty.util.internal.StringUtil;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Created by kongxiangxin on 2017/8/2.
@@ -8,7 +8,7 @@ import io.netty.util.internal.StringUtil;
 public class NamingStrategy {
 
     private static String clearUnderscores(String name){
-        if(StringUtil.isNullOrEmpty(name)){
+        if(StringUtils.isBlank(name)){
             return name;
         }
         String[] arr = name.split("_");
@@ -30,7 +30,7 @@ public class NamingStrategy {
 
     public static String columnToFieldName(String columnName) {
         String propertyName = clearUnderscores(columnName);
-        if(StringUtil.isNullOrEmpty(propertyName)){
+        if(StringUtils.isBlank(propertyName)){
             return propertyName;
         }
         return propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1);

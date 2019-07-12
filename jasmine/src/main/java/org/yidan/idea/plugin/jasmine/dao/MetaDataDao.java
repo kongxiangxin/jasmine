@@ -1,6 +1,5 @@
 package org.yidan.idea.plugin.jasmine.dao;
 
-import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.yidan.idea.plugin.jasmine.mapping.NamingStrategy;
 import org.yidan.idea.plugin.jasmine.mapping.TypeMapping;
@@ -10,11 +9,7 @@ import org.yidan.idea.plugin.jasmine.meta.Table;
 import org.yidan.idea.plugin.jasmine.settings.GenerateSetting;
 import org.yidan.idea.plugin.jasmine.settings.JdbcProperty;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.JDBCType;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -83,7 +78,7 @@ public class MetaDataDao {
                 if (classNameMapping.containsKey(tableName)) {
                     className = classNameMapping.get(tableName);
                 } else {
-                    if (StringUtils.isBlank(setting.getTableName()) && setting.truncatePrefix() && !StringUtil.isNullOrEmpty(setting.getTablePrefix())) {
+                    if (StringUtils.isBlank(setting.getTableName()) && setting.truncatePrefix() && StringUtils.isNotBlank(setting.getTablePrefix())) {
                         //去掉前缀
                         className = NamingStrategy.tableToClassName(tableName.substring(setting.getTablePrefix().length()));
                     } else {
