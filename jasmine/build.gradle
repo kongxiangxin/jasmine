@@ -40,3 +40,8 @@ patchPluginXml {
 //    username intellijPublishUsername
 //    password intellijPublishPassword
 //}
+
+
+apply plugin: 'application'
+mainClassName = 'org.yidan.idea.plugin.jasmine.Main'
+

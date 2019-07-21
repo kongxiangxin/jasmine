@@ -170,13 +170,13 @@ public class GenerateAction extends AnAction implements Logger {
 	}
 
 	@Override
-	public void setProgress(double percent) {
+	public void setProgress(int percent) {
     	if(progressIndicator != null){
 			progressIndicator.setFraction(percent);
-			if(percent == 1){
+			if(percent == 100){
 				progressIndicator.setText("Generated");
 			}else{
-				progressIndicator.setText((int)percent * 100 + "% has generated...");
+				progressIndicator.setText(percent + "% has generated...");
 			}
 		}
 	}

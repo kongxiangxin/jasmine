@@ -20,9 +20,15 @@ public class Generator {
 
 	public void generate(String configFilePath){
 		File configFile = new File(configFilePath);
+		try {
+			configFile = configFile.getCanonicalFile();
+		} catch (IOException e) {
+			logger.error(e);
+			return;
+		}
 		File dir = configFile.getParentFile();
 		if(dir == null){
-			logger.error("目录不存在");
+			logger.error("Cannot found the directory for file " + configFilePath);
 			return;
 		}
 		String moduleName = dir.getName();
@@ -41,15 +47,17 @@ public class Generator {
 			MetaDataDao dao = new MetaDataDao(setting);
 			Database database = dao.getDatabase();
 
-			logger.setProgress(0.1);
+			logger.setProgress(1);
 			int index = 1;
 			for(File file : entries){
 				generate(file, database, setting);
 				float percent = index * 1.0f / entries.size();
-				logger.setProgress(percent * 100);
+				percent = percent * 100;
+				logger.setProgress((int)percent);
 				index ++;
+				Thread.sleep(100);
 			}
-			logger.info("Generated");
+			logger.info("\nDone.");
 
 		} catch (Throwable e) {
 			e.printStackTrace();

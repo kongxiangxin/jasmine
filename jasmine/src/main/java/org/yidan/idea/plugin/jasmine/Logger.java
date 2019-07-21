@@ -11,6 +11,6 @@ public interface Logger {
 
     void info(String message);
 
-    void setProgress(double percent);
+    void setProgress(int percent);
 
 }
