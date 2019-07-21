@@ -1,14 +1,8 @@
 package org.yidan.idea.plugin.jasmine.settings;
 
-import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by kongxiangxin on 2017/8/1.
@@ -54,9 +48,9 @@ public class GenerateSetting {
                 String value = properties.getProperty(key);
                 setting.properties.put(key, value);
                 if(key.startsWith("typeMapping.")){
-                    if(value != null){
-                        value = value.replace(" ", "_").toLowerCase();
-                    }
+//                    if(value != null){
+//                        value = value.replace(" ", "_").toLowerCase();
+//                    }
                     setting.typeMapping.put(key.substring("typeMapping.".length()), value);
                 }
                 if(key.startsWith("tableNameMapping.")){
@@ -70,18 +64,18 @@ public class GenerateSetting {
         }
 
 
-        if(!StringUtil.isNullOrEmpty(setting.excludeTables)){
+        if(StringUtils.isNotBlank(setting.excludeTables)){
             String[] arr = setting.excludeTables.split(",");
             for(String s : arr){
-                if(!StringUtil.isNullOrEmpty(s)){
+                if(StringUtils.isNotBlank(s)){
                     setting.excludeTableSet.add(s);
                 }
             }
         }
-        if(!StringUtil.isNullOrEmpty(setting.excludeColumns)){
+        if(StringUtils.isNotBlank(setting.excludeColumns)){
             String[] arr = setting.excludeColumns.split(",");
             for(String s : arr){
-                if(!StringUtil.isNullOrEmpty(s)){
+                if(StringUtils.isNotBlank(s)){
                     setting.excludeColumnSet.add(s);
                 }
             }

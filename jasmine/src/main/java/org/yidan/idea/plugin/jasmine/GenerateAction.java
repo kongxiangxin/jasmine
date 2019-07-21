@@ -8,8 +8,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -19,20 +17,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
-import org.yidan.idea.plugin.jasmine.dao.MetaDataDao;
-import org.yidan.idea.plugin.jasmine.meta.Database;
-import org.yidan.idea.plugin.jasmine.settings.GenerateSetting;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-
-import static groovyjarjarantlr.build.ANTLR.root;
 
 /**
  * Created by kongxiangxin on 2017/7/31.
@@ -41,12 +30,14 @@ public class GenerateAction extends AnAction implements Logger {
 
     private boolean generating = false;
 
+    private ProgressIndicator progressIndicator;
+
     private PsiElement getCurrentPsiElement(AnActionEvent event){
         if(event.getProject() == null){
             return null;
         }
         Object navigatable = event.getData(CommonDataKeys.NAVIGATABLE);
-        if(navigatable == null || !(navigatable instanceof PsiElement)){
+        if(!(navigatable instanceof PsiElement)){
             Editor editor = event.getData(CommonDataKeys.EDITOR);
             if(editor == null){
                 return null;
@@ -80,18 +71,7 @@ public class GenerateAction extends AnAction implements Logger {
             return;
         }
 
-        Properties prop = new Properties();
-        try {
-            prop.load(new FileInputStream(configNode.getPath()));
-        } catch (IOException e) {
-            e.printStackTrace();
-            showError(e.getMessage());
-            return;
-        }
-
-        GenerateSetting setting = GenerateSetting.getInstance(prop);
-
-        generate(event.getProject(), configNode.getParent(), setting);
+        generate(event.getProject(), configNode);
 
     }
 
@@ -111,12 +91,7 @@ public class GenerateAction extends AnAction implements Logger {
         return null;
     }
 
-    private void showError(Throwable e){
-        String message = ExceptionUtils.getFullStackTrace(e);
-        showError(message);
-    }
-
-    public void showError(String message){
+    public void error(String message){
         if(message == null){
             return;
         }
@@ -165,69 +140,44 @@ public class GenerateAction extends AnAction implements Logger {
         return entries;
     }
 
-    private void generate(Project project, VirtualFile moduleRoot, GenerateSetting setting){
-        if(moduleRoot == null || project == null){
-            return;
-        }
-        if(setting == null){
-            showError("Cannot found jasmime.properties[parent:" + moduleRoot.getName() + "]");
+    private void generate(Project project, VirtualFile configNode){
+        if(configNode == null || project == null){
             return;
         }
         if(generating){
             showMessage("Another task is executing, just wait...");
         }
         generating = true;
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Jasmine"){
+
+		ProgressManager.getInstance().run(new Task.Backgroundable(project, "Jasmine"){
             @Override
             public void run(@NotNull ProgressIndicator progressIndicator) {
-                showMessage("Generating " + moduleRoot.getName() + "...");
-
-                // start your process
-                try{
-                    MetaDataDao dao = new MetaDataDao(setting);
-                    Database database = dao.getDatabase();
-
-                    List<VirtualFile> entries = findTemplateEntry(moduleRoot);
-                    if(entries.isEmpty()){
-                        showError("No template found [module:" + moduleRoot.getName() + "]");
-                        return;
-                    }
-                    // Set the progress bar percentage and text
-                    progressIndicator.setFraction(0.10);
-                    progressIndicator.setText("Generating " + moduleRoot.getName() + "...");
-
-                    int index = 1;
-                    for(VirtualFile file : entries){
-                        generate(file, database, setting);
-                        float percent = index * 1.0f / entries.size();
-                        progressIndicator.setFraction(percent);
-                        progressIndicator.setText((int)percent * 100 + "% has generated...");
-                        index ++;
-                    }
-
-                }catch (Throwable e){
-                    e.printStackTrace();
-                    showError(e);
-                }finally {
-                    generating = false;
-                    showMessage("Generated");
-
-                    // Finished
-                    progressIndicator.setFraction(1.0);
-                    progressIndicator.setText("Generated");
-                }
+            	GenerateAction.this.progressIndicator = progressIndicator;
+				Generator generator = new Generator(GenerateAction.this);
+				generator.generate(configNode.getPath());
             }});
-
-    }
-
-    private void generate(VirtualFile templateEntry, Database database, GenerateSetting setting){
-        TemplateProcessor processor = new TemplateProcessor(setting, templateEntry, database, this);
-        processor.process();;
-
     }
 
     @Override
-    public void showInfo(String message) {
+    public void info(String message) {
         showMessage(message);
     }
+
+	@Override
+	public void error(Exception e) {
+		String message = ExceptionUtils.getFullStackTrace(e);
+		error(message);
+	}
+
+	@Override
+	public void setProgress(int percent) {
+    	if(progressIndicator != null){
+			progressIndicator.setFraction(percent);
+			if(percent == 100){
+				progressIndicator.setText("Generated");
+			}else{
+				progressIndicator.setText(percent + "% has generated...");
+			}
+		}
+	}
 }

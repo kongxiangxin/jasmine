@@ -1,8 +1,6 @@
 package org.yidan.idea.plugin.jasmine;
 
-import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -10,14 +8,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.yidan.idea.plugin.jasmine.meta.Database;
 import org.yidan.idea.plugin.jasmine.settings.GenerateSetting;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.Properties;
 
 
@@ -26,13 +17,13 @@ import java.util.Properties;
  */
 public class TemplateProcessor {
 
-    private VirtualFile templateEntry;
+    private File templateEntry;
     private Database database;
     private GenerateSetting setting;
     private Logger logger;
     private static final int BUFFER_SIZE = 1024 * 1024 / 2;
 
-    public TemplateProcessor(GenerateSetting setting, VirtualFile templateEntry, Database database, Logger logger){
+    public TemplateProcessor(GenerateSetting setting, File templateEntry, Database database, Logger logger){
         this.setting = setting;
         this.templateEntry = templateEntry;
         this.database = database;
@@ -48,8 +39,8 @@ public class TemplateProcessor {
 
         String content;
         try {
-            String e = StringUtils.substringAfterLast(templatePath, "/");
-            String templateFileFolder = StringUtils.substringBefore(templatePath, e);
+            File templateFile = new File(templatePath);
+            String templateFileFolder = templateFile.getParentFile().getCanonicalPath();
             VelocityEngine engine = new VelocityEngine();
             Properties prop = new Properties();
             prop.put(Velocity.ENCODING_DEFAULT, setting.getFileEncoding());//全局编码,如果以下编码不设置它就生效
@@ -60,7 +51,7 @@ public class TemplateProcessor {
             prop.put("runtime.log.logsystem.log4j.category", "velocity");
             prop.put("runtime.log.logsystem.log4j.logger", "velocity");
             engine.init(prop);
-            Template template = engine.getTemplate(e, setting.getFileEncoding());
+            Template template = engine.getTemplate(templateFile.getName(), setting.getFileEncoding());
             StringWriter writer = new StringWriter();
             VelocityContext context = new VelocityContext();
             context.put("model", model);
@@ -79,15 +70,21 @@ public class TemplateProcessor {
     }
 
     public void process(){
-        parseTemplate(templateEntry.getPath(), database);
-    }
+		try {
+			parseTemplate(templateEntry.getCanonicalPath(), database);
+		} catch (IOException e) {
+			logger.error(e);
+		}
+	}
 
     public void process(String templatePath, Object model){
-        VirtualFile folder = templateEntry.getParent();
-        String basePath = folder.getPath();
-
-        String path = concatPath(basePath, templatePath);
-        parseTemplate(path, model);
+		try {
+			String basePath = templateEntry.getParentFile().getCanonicalPath();
+			String path = concatPath(basePath, templatePath);
+			parseTemplate(path, model);
+		} catch (IOException e) {
+			logger.error(e);
+		}
     }
 
 
@@ -111,28 +108,27 @@ public class TemplateProcessor {
     }
 
     public void generate(String templateFile, String outputFile, boolean replaceIfExists, Object model){
-        VirtualFile folder = templateEntry.getParent();
+		try {
+			String basePath = templateEntry.getParentFile().getCanonicalPath();
+			String outputFilePath = basePath + File.separator + outputFile;
+			File output = new File(outputFilePath);
+			if(output.exists() && !replaceIfExists){
+				return;
+			}
 
-        String outputFilePath = folder.getPath() + File.separator + outputFile;
-        File output = new File(outputFilePath);
-        if(output.exists() && !replaceIfExists){
-            return;
-        }
+			String templatePath = basePath + File.separator + templateFile;
+			File template = new File(templatePath);
+			if(!template.exists()){
+				logger.error("template " + templateFile + " not found");
+				return;
+			}
 
-        String templatePath = folder.getPath() + File.separator + templateFile;
-        File template = new File(templatePath);
-        if(!template.exists()){
-            logger.showError("模板" + templateFile + "不存在");
-            return;
-        }
-
-        String absolutePath = template.getAbsolutePath();
-        if(File.separatorChar == '\\'){
-            absolutePath = absolutePath.replace(File.separator, "/");
-        }
-
-        String content = parseTemplate(absolutePath, model);
-        write(content, output);
+			String absolutePath = template.getCanonicalPath();
+			String content = parseTemplate(absolutePath, model);
+			write(content, output);
+		} catch (IOException e) {
+			logger.error(e);
+		}
     }
 
     private void write(String content, File output){

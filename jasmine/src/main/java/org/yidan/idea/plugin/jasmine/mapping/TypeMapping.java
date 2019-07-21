@@ -24,9 +24,6 @@ public class TypeMapping {
         typeMap.put(JDBCType.REAL, "Double");
         typeMap.put(JDBCType.DOUBLE, "Double");
 
-        typeMap.put(JDBCType.FLOAT, "Float");
-        typeMap.put(JDBCType.FLOAT, "Float");
-        typeMap.put(JDBCType.FLOAT, "Float");
 
         typeMap.put(JDBCType.NUMERIC, "java.math.BigDecimal");
         typeMap.put(JDBCType.DECIMAL, "java.math.BigDecimal");
