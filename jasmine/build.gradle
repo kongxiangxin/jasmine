@@ -32,9 +32,12 @@ dependencies {
 
 intellij {
     version '2016.1'
+    updateSinceUntilBuild false
+//    sameSinceUntilBuild false
 }
 patchPluginXml {
     changeNotes "fix bug when type mapping exists"
+//    sinceBuild '141'
 }
 //publishPlugin {
 //    username intellijPublishUsername
