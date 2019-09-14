@@ -91,6 +91,7 @@ public class TemplateProcessor {
     public String concatPath(String basePath, String path){
         String result = FilenameUtils.concat(basePath, path);
         if(result != null && File.separatorChar == '\\'){
+            //make the path linux style
             result = result.replace(File.separator, "/");
         }
         return result;
@@ -107,10 +108,17 @@ public class TemplateProcessor {
         return value;
     }
 
+    /**
+     * we can invoke it in template file
+     * @param templateFile
+     * @param outputFile
+     * @param replaceIfExists
+     * @param model
+     */
     public void generate(String templateFile, String outputFile, boolean replaceIfExists, Object model){
 		try {
 			String basePath = templateEntry.getParentFile().getCanonicalPath();
-			String outputFilePath = basePath + File.separator + outputFile;
+			String outputFilePath = concatPath(basePath, outputFile);
 			File output = new File(outputFilePath);
 			if(output.exists() && !replaceIfExists){
 				return;
@@ -131,10 +139,16 @@ public class TemplateProcessor {
 		}
     }
 
-    private void write(String content, File output){
+    private void write(String content, File output) throws IOException {
         BufferedReader reader = null;
         BufferedWriter writer = null;
         try {
+            File targetDir = output.getParentFile();
+            if(!targetDir.exists()){
+                if(!targetDir.mkdirs()){
+                    throw new IOException("failed to make dir " + targetDir.getCanonicalPath());
+                }
+            }
             reader = new BufferedReader(new StringReader(content));
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output), setting.getFileEncoding()));
             char[] buffer = new char[BUFFER_SIZE];
@@ -142,8 +156,7 @@ public class TemplateProcessor {
             while((read = reader.read(buffer)) != -1){
                 writer.write(buffer, 0, read);
             }
-        } catch (Throwable e) {
-        } finally {
+        }  finally {
             if(reader != null){
                 try {
                     reader.close();

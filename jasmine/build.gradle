@@ -1,15 +1,15 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.4.9'
+    //https://github.com/JetBrains/gradle-intellij-plugin
+    id 'org.jetbrains.intellij' version '0.4.10'
 }
 
 group 'org.yidan.idea.plugin'
-version '1.172.2'
+version '1.172.3'
 
 sourceCompatibility = 1.8
 
 repositories {
-//    mavenCentral()
     maven { url 'https://maven.aliyun.com/repository/public/' }
     mavenLocal()
     mavenCentral()
@@ -21,29 +21,30 @@ dependencies {
     compile("commons-io:commons-io:2.6")
     compile("commons-collections:commons-collections:3.2.2")
     runtime("mysql:mysql-connector-java:5.1.17")
-//    runtime group: 'com.oracle', name: 'ojdbc14', version: '10.2.0.4.0'
-//    runtime group: 'com.oracle', name: 'ojdbc14', version: '9.0.2.0.0'
+    /**
+     * I can't get the ojdbc from central repository, so I put the jar file local
+     * runtime group: 'com.oracle', name: 'ojdbc14', version: '10.2.0.4.0'
+     */
     runtime files('lib/ojdbc14.jar')
     runtime group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
     runtime group: 'com.microsoft.sqlserver', name: 'sqljdbc4', version: '4.0'
-    runtime group: 'org.apache.velocity', name: 'velocity', version: '1.7'
+    compile group: 'org.apache.velocity', name: 'velocity', version: '1.7'
 
 }
 
 intellij {
     version '2016.1'
+    /**
+     * I want this plugin can compatibility with 14.1+
+     * see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000152064-plugin-is-incompatible-with-this-installation-
+     */
     updateSinceUntilBuild false
-//    sameSinceUntilBuild false
+    sameSinceUntilBuild false
 }
 patchPluginXml {
     changeNotes "fix bug when type mapping exists"
 //    sinceBuild '141'
 }
-//publishPlugin {
-//    username intellijPublishUsername
-//    password intellijPublishPassword
-//}
-
 
 apply plugin: 'application'
 mainClassName = 'org.yidan.idea.plugin.jasmine.Main'
