@@ -28,7 +28,7 @@
 
   <actions>
     <!-- Add your actions here -->
-    <action id="Jasmine.GenerateAction" class="org.yidan.idea.plugin.jasmine.GenerateAction" text="Code generator based on database model and velocity template"
+    <action id="Jasmine.GenerateAction" class="org.yidan.jasmine.ideaplugin.GenerateAction" text="Code generator based on database model and velocity template"
             description="Generate entity class and service" icon="JasmineIcons.Jasmine">
       <add-to-group group-id="MainToolBar" anchor="last"/>
       <keyboard-shortcut first-keystroke="control alt G" keymap="$default"/>

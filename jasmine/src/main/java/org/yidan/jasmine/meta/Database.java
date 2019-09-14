@@ -1,4 +1,4 @@
-package org.yidan.idea.plugin.jasmine.meta;
+package org.yidan.jasmine.meta;
 
 import java.util.ArrayList;
 import java.util.List;

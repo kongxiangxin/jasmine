@@ -1,4 +1,4 @@
-package org.yidan.idea.plugin.jasmine;
+package org.yidan.jasmine.ideaplugin;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -19,6 +19,8 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
+import org.yidan.jasmine.Generator;
+import org.yidan.jasmine.Logger;
 
 import java.util.ArrayList;
 import java.util.List;

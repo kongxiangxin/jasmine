@@ -1,13 +1,13 @@
-package org.yidan.idea.plugin.jasmine.dao;
+package org.yidan.jasmine.dao;
 
 import org.apache.commons.lang.StringUtils;
-import org.yidan.idea.plugin.jasmine.mapping.NamingStrategy;
-import org.yidan.idea.plugin.jasmine.mapping.TypeMapping;
-import org.yidan.idea.plugin.jasmine.meta.Column;
-import org.yidan.idea.plugin.jasmine.meta.Database;
-import org.yidan.idea.plugin.jasmine.meta.Table;
-import org.yidan.idea.plugin.jasmine.settings.GenerateSetting;
-import org.yidan.idea.plugin.jasmine.settings.JdbcProperty;
+import org.yidan.jasmine.mapping.NamingStrategy;
+import org.yidan.jasmine.mapping.TypeMapping;
+import org.yidan.jasmine.meta.Column;
+import org.yidan.jasmine.meta.Database;
+import org.yidan.jasmine.meta.Table;
+import org.yidan.jasmine.settings.GenerateSetting;
+import org.yidan.jasmine.settings.JdbcProperty;
 
 import java.sql.*;
 import java.util.HashSet;

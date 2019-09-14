@@ -1,12 +1,12 @@
-package org.yidan.idea.plugin.jasmine;
+package org.yidan.jasmine;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
-import org.yidan.idea.plugin.jasmine.meta.Database;
-import org.yidan.idea.plugin.jasmine.settings.GenerateSetting;
+import org.yidan.jasmine.meta.Database;
+import org.yidan.jasmine.settings.GenerateSetting;
 
 import java.io.*;
 import java.util.Properties;
@@ -77,6 +77,11 @@ public class TemplateProcessor {
 		}
 	}
 
+    /**
+     * we can invoke it in template file
+     * @param templatePath
+     * @param model
+     */
     public void process(String templatePath, Object model){
 		try {
 			String basePath = templateEntry.getParentFile().getCanonicalPath();

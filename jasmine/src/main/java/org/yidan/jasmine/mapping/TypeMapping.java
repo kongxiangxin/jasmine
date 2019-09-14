@@ -1,4 +1,4 @@
-package org.yidan.idea.plugin.jasmine.mapping;
+package org.yidan.jasmine.mapping;
 
 import java.sql.JDBCType;
 import java.util.HashMap;

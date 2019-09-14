@@ -1,4 +1,4 @@
-package org.yidan.idea.plugin.jasmine.settings;
+package org.yidan.jasmine.settings;
 
 import org.apache.commons.lang.StringUtils;
 

@@ -1,6 +1,6 @@
-package org.yidan.idea.plugin.jasmine.dao;
+package org.yidan.jasmine.dao;
 
-import org.yidan.idea.plugin.jasmine.settings.JdbcProperty;
+import org.yidan.jasmine.settings.JdbcProperty;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

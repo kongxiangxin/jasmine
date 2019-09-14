@@ -1,4 +1,4 @@
-package org.yidan.idea.plugin.jasmine;
+package org.yidan.jasmine;
 
 public class Main implements Logger{
 	public static void main(String[] args){

@@ -47,5 +47,5 @@ patchPluginXml {
 }
 
 apply plugin: 'application'
-mainClassName = 'org.yidan.idea.plugin.jasmine.Main'
+mainClassName = 'org.yidan.jasmine.Main'
 

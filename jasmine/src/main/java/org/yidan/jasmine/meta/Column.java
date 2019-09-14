@@ -1,6 +1,6 @@
-package org.yidan.idea.plugin.jasmine.meta;
+package org.yidan.jasmine.meta;
 
-import org.yidan.idea.plugin.jasmine.mapping.NamingStrategy;
+import org.yidan.jasmine.mapping.NamingStrategy;
 
 import java.sql.JDBCType;
 

@@ -1,4 +1,4 @@
-package org.yidan.idea.plugin.jasmine.mapping;
+package org.yidan.jasmine.mapping;
 
 import org.apache.commons.lang.StringUtils;
 

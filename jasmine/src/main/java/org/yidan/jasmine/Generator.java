@@ -1,9 +1,9 @@
-package org.yidan.idea.plugin.jasmine;
+package org.yidan.jasmine;
 
 import org.apache.commons.io.FileUtils;
-import org.yidan.idea.plugin.jasmine.dao.MetaDataDao;
-import org.yidan.idea.plugin.jasmine.meta.Database;
-import org.yidan.idea.plugin.jasmine.settings.GenerateSetting;
+import org.yidan.jasmine.dao.MetaDataDao;
+import org.yidan.jasmine.meta.Database;
+import org.yidan.jasmine.settings.GenerateSetting;
 
 import java.io.File;
 import java.io.FileInputStream;
