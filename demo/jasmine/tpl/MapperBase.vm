@@ -1,0 +1,224 @@
+#set ($entityType = "${model.entityPkg}.${model.table.className}")
+#macro(name $rawName)
+${rawName.substring(0,1).toLowerCase()}${rawName.substring(1)}##
+#end
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="${model.repoPkg}.${model.table.className}Repository">
+    <sql id="TableName">
+        ${model.table.name}
+    </sql>
+
+    <sql id="BaseColumnList">
+#foreach($column in $model.table.columns)##
+#if($foreach.first)     #end
+`${column.name}`##
+#if($foreach.hasNext ), #end##
+#end
+
+    </sql>
+
+    <resultMap id="BaseResultMap" type="${entityType}" autoMapping="false">
+#foreach($column in $model.table.columns)
+        <result column="$column.name" property="$column.fieldName" jdbcType="$column.jdbcType"/>
+#end
+    </resultMap>
+
+    <insert id="insert"#if($model.table.pks.size()) useGeneratedKeys="true" keyProperty="#name(${model.table.className}).${model.table.pks.get(0).fieldName}"#end>
+        INSERT INTO
+        <include refid="TableName"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+#foreach($column in $model.table.columns)
+            `${column.name}`,
+#end
+
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+#foreach($column in $model.table.columns)##
+#if($column.name != 'create_time' && $column.name != 'update_time')
+            #{#name(${model.table.className}).${column.fieldName},jdbcType=${column.jdbcType}},
+#end
+#if($column.name == 'create_time' || $column.name == 'update_time')
+            now(),
+#end
+#end
+
+        </trim>
+    </insert>
+
+    <insert id="insertSelective"#if($model.table.pks.size()) useGeneratedKeys="true" keyProperty="#name(${model.table.className}).${model.table.pks.get(0).fieldName}"#end>
+        INSERT INTO
+        <include refid="TableName"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+#foreach($column in $model.table.columns)##
+#if($column.name != 'create_time' && $column.name != 'update_time')
+            <if test="#name(${model.table.className}).${column.fieldName} != null">
+                `${column.name}`,
+            </if>
+#end
+#if($column.name == 'create_time' || $column.name == 'update_time')
+            `${column.name}`,
+#end
+#end
+
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+#foreach($column in $model.table.columns)##
+#if($column.name != 'create_time' && $column.name != 'update_time')
+            <if test="#name(${model.table.className}).${column.fieldName} != null">
+                #{#name(${model.table.className}).${column.fieldName},jdbcType=${column.jdbcType}},
+            </if>
+#end
+#if($column.name == 'create_time' || $column.name == 'update_time')
+            now(),
+#end
+#end
+
+        </trim>
+    </insert>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+        <include refid="BaseColumnList"/>
+        from
+        <include refid="TableName"/>
+        where
+#foreach($column in $model.table.pks)
+            `${column.name}` = #{${column.fieldName}}
+#if($foreach.hasNext)
+            and
+#end
+#end
+    </select>
+
+
+#if($model.deleteColumn)
+    <update id="deleteByPrimaryKey">
+        update
+        <include refid="TableName"/>
+        set ${model.deleteColumn.name} = 1
+        where
+#foreach($column in $model.table.pks)
+            `${column.name}` = #{${column.fieldName}}
+#if($foreach.hasNext)
+            and
+#end
+#end
+    </update>
+#else
+    <delete id="deleteByPrimaryKey">
+        DELETE from
+        <include refid="TableName"/>
+        where
+#foreach($column in $model.table.pks)
+            `${column.name}` = #{${column.fieldName}}
+#if($foreach.hasNext)
+            and
+#end
+#end
+    </delete>
+#end
+
+    <update id="updateByPrimaryKey">
+        update
+        <include refid="TableName"/>
+        set
+        <trim suffixOverrides=",">
+#foreach($column in $model.table.columns)##
+#if(!$column.PK && $column.name != 'create_time' && $column.name != 'update_time' && $column.name != $model.versionColumn.name)
+            `${column.name}` = #{#name(${model.table.className}).${column.fieldName},jdbcType=${column.jdbcType}},
+#end##
+#if($column.name == 'update_time')
+            `${column.name}` = now(),
+#end
+#end
+#if($model.versionColumn)
+            `${model.versionColumn.name}` = `${model.versionColumn.name}` + 1,
+#end
+        </trim>
+        where
+#foreach($column in $model.table.pks)
+            `${column.name}` = #{#name(${model.table.className}).${column.fieldName}}
+#if($foreach.hasNext)
+            and
+#end
+#end
+#if($model.versionColumn)
+            and `${model.versionColumn.name}` = #{#name(${model.table.className}).${model.versionColumn.fieldName},jdbcType=${model.versionColumn.jdbcType}}
+#end
+    </update>
+
+    <update id="updateByPrimaryKeySelective">
+        update
+        <include refid="TableName"/>
+        set
+        <trim suffixOverrides=",">
+#foreach($column in $model.table.columns)##
+#if(!$column.PK && $column.name != 'create_time' && $column.name != 'update_time' && $column.name != $model.versionColumn.name)
+            <if test="#name(${model.table.className}).${column.fieldName} != null">
+                `${column.name}` = #{#name(${model.table.className}).${column.fieldName},jdbcType=${column.jdbcType}},
+            </if>
+#if($column.jdbcType == 'TIMESTAMP')
+            <if test="#name(${model.table.className}).${column.fieldName} == null">
+                `${column.name}` = '0000-00-00 00:00:00',
+            </if>
+#end
+#end##
+#if($column.name == 'update_time')
+            `${column.name}` = now(),
+#end
+#end
+#if($model.versionColumn)
+        `${model.versionColumn.name}` = `${model.versionColumn.name}` + 1,
+#end
+        </trim>
+        where
+#foreach($column in $model.table.pks)
+            `${column.name}` = #{#name(${model.table.className}).${column.fieldName}}
+#if($foreach.hasNext)
+                and
+#end
+#end
+#if($model.versionColumn)
+            and `${model.versionColumn.name}` = #{#name(${model.table.className}).${model.versionColumn.fieldName},jdbcType=${model.versionColumn.jdbcType}}
+#end
+    </update>
+
+    <sql id="page_select_sql">
+#foreach($column in $model.table.columns)##
+        <if test="#name(${model.table.className}).${column.fieldName} != null">
+            and `${column.name}` = #{#name(${model.table.className}).${column.fieldName},jdbcType=${column.jdbcType}}
+        </if>
+#end
+    </sql>
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(1) from
+        <include refid="TableName"/>
+        where 1 = 1
+        <include refid="page_select_sql" />
+    </select>
+    <select id="selectPage" resultMap="BaseResultMap">
+        select
+        <include refid="BaseColumnList"/>
+        from
+        <include refid="TableName"/>
+        where 1 = 1
+        <include refid="page_select_sql" />
+
+        <if test="pageable.sort != null">
+            order by
+            <foreach collection="pageable.sort" item="order" separator=",">
+                <if test="
+#foreach($column in $model.table.columns)
+                #if(!$foreach.first)||#end order.property == '${column.name}'
+#end
+                ">
+                    ${order.property} ${order.direction}
+                </if>
+            </foreach>
+        </if>
+        <if test="pageable.offset >= 0 and pageable.pageSize > 0">
+            limit ${pageable.offset}, ${pageable.pageSize}
+        </if>
+    </select>
+</mapper>

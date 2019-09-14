@@ -1,8 +1,0 @@
-#set($cfg = {
-    "entityPkg" : "com.abc.demo.entity",
-    "repoPkg" : "com.abc.demo.repository",
-    "tplPath" : "./tpl",
-    "targetPath" : "../demo-service/src/main/resources/mapper",
-    "db":$model
-})
-$processor.process("${cfg.tplPath}/Mapper.jm.vm", $cfg)

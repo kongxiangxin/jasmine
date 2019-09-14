@@ -1,0 +1,8 @@
+package $model.package;
+
+import com.vip.venus.core.beans.mapping.annotation.MapClass;
+
+@MapClass(value="${model.modelPkg}.${model.table.className}Model")
+public class ${model.table.className} extends ${model.table.className}Base{
+
+}

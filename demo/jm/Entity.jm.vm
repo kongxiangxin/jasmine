@@ -1,7 +1,0 @@
-#set($cfg = {
-    "package" : "com.abc.demo.entity",
-    "tplPath" : "./tpl",
-    "targetPath" : "../demo-service/src/main/java/com/abc/demo/entity",
-    "db":$model
-})
-$processor.process("${cfg.tplPath}/Entity.jm.vm", $cfg)

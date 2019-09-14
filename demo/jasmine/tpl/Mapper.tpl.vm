@@ -4,10 +4,10 @@
 
 
     #foreach($column in $table.columns)##
-        #if($column.name == 'deleted')
+        #if($column.name == 'is_deleted')
             #set($repoModel.deleteColumn = $column)
         #end
-        #if($column.name == 'version')
+        #if($column.name == 'record_version')
             #set($repoModel.versionColumn = $column)
         #end
     #end

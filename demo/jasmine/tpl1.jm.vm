@@ -1,0 +1,21 @@
+#set($cfg = {
+    "basePkg" : "com.abc.demo",
+    "tplPath" : "./tpl",
+    "baseTargetPath" : "../src/main/java/com/abc/demo",
+    "db":$model
+})
+
+#set($cfg.package = "${cfg.basePkg}.entity")
+#set($cfg.modelPkg = "${cfg.basePkg}.model")
+#set($cfg.targetPath = "${cfg.baseTargetPath}/entity")
+$processor.process("${cfg.tplPath}/Entity.tpl.vm", $cfg)
+
+
+#set($cfg.entityPkg = "${cfg.basePkg}.entity")
+#set($cfg.repoPkg = "${cfg.basePkg}.repository")
+#set($cfg.targetPath = "${cfg.baseTargetPath}/repository")
+$processor.process("${cfg.tplPath}/Repository.tpl.vm", $cfg)
+
+
+#set($cfg.targetPath = "../src/main/resources/mapper")
+$processor.process("${cfg.tplPath}/Mapper.tpl.vm", $cfg)
