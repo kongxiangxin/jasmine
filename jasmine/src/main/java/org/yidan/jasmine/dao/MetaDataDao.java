@@ -9,7 +9,11 @@ import org.yidan.jasmine.meta.Table;
 import org.yidan.jasmine.settings.GenerateSetting;
 import org.yidan.jasmine.settings.JdbcProperty;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.JDBCType;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -35,22 +39,6 @@ public class MetaDataDao {
             throw e;
         }
     }
-
-//    public List<String> getDabatases() throws Throwable {
-//        Statement statement = this.conn.createStatement();
-//        ResultSet rs = statement.executeQuery("show databases");
-//        ArrayList databases = new ArrayList();
-//
-//        while(rs.next()) {
-//            databases.add(rs.getString(1));
-//        }
-//
-//        statement.close();
-//        rs.close();
-//        return databases;
-//    }
-//
-//
 
     public Database getDatabase() throws Throwable {
         Database database = new Database();

@@ -15,8 +15,9 @@ public class ${model.className}Base {
 #foreach($column in $model.table.columns)
     /**
     * ${column.remarks}
+    * type ${column.type}
     */
-	private $column.javaType $column.fieldName;
+    private $column.javaType $column.fieldName;
 #end  ## ~~ end column to field
 
 ## ~~ begin getter & setter method

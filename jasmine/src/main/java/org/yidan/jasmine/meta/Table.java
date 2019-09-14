@@ -7,11 +7,33 @@ import java.util.List;
  * Created by kongxiangxin on 2017/8/1.
  */
 public class Table {
+    /**
+     * 原始表名
+     */
     private String rawName;
+    /**
+     * 表名。受tableNameMapping影响。
+     */
     private String name;
+
+    /**
+     * pojo类名。受classNameMapping影响。
+     */
     private String className;
+
+    /**
+     * 表的注释
+     */
     private String remarks;
+
+    /**
+     * 字段集合
+     */
     private List<Column> columns = new ArrayList<>();
+
+    /**
+     * 主键集合
+     */
     private List<Column> pks = new ArrayList<>();
 
     public Table(String rawName, String name, String className, String remarks) {

@@ -8,13 +8,39 @@ import java.sql.JDBCType;
  * Created by kongxiangxin on 2017/8/1.
  */
 public class Column {
+    /**
+     * jdbc TYPE_NAME
+     */
     private String type;
+
     private JDBCType jdbcType;
+    /**
+     * pojo type
+     */
     private String javaType;
+    /**
+     * jdbc COLUMN_NAME
+     */
     private String name;
+
+    /**
+     * pojo field name
+     */
     private String fieldName;
+
+    /**
+     * pojo propertyName
+     */
     private String propertyName;
+
+    /**
+     * 字段注释
+     */
     private String remarks;
+
+    /**
+     * 是否主键
+     */
     private boolean isPK;
 
 
