@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'org.yidan.idea.plugin'
-version '1.172.3'
+version '1.172.4'
 
 sourceCompatibility = 1.8
 
@@ -42,7 +42,7 @@ intellij {
     sameSinceUntilBuild false
 }
 patchPluginXml {
-    changeNotes "fix bug when type mapping exists"
+    changeNotes "compatibility idea version since 2016.1"
 //    sinceBuild '141'
 }
 
