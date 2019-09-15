@@ -21,7 +21,18 @@
 
 安装成功之后，在IDEA的工具栏中，会多出一个jasmine的图标，如下图：
 ![jasmine插件](https://wx1.sinaimg.cn/mw690/65c35b14ly1g6zfo4b5sxj21hs0g0juh.jpg)
+使用的时候，点击一下这个图标即可
 
+## 开发人员指引
+```
+git clone https://github.com/kongxiangxin/jasmine.git
+cd /path/to/jasmine/jasmine
+./gradlew build
+```
+生成的zip包在build/distributions目录下
+
+idea插件开发文档：
+https://www.jetbrains.org/intellij/sdk/docs/tutorials/build_system/prerequisites.html
 
 ## jasmine.properties
 jasmine的配置文件，可用配置项如下：
