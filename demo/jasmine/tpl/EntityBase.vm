@@ -1,3 +1,4 @@
+## 此时，model是Entity.tpl.vm中传入的entityModel
 package $model.package;
 
 /**

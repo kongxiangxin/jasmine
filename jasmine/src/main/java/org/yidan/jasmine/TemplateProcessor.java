@@ -32,7 +32,7 @@ public class TemplateProcessor {
 
     public TemplateProcessor(){}
 
-    public String parseTemplate(String templatePath, Object model) {
+    private String parseTemplate(String templatePath, Object model) {
         Thread thread = Thread.currentThread();
         ClassLoader loader = thread.getContextClassLoader();
         thread.setContextClassLoader(this.getClass().getClassLoader());
@@ -69,7 +69,7 @@ public class TemplateProcessor {
         return content;
     }
 
-    public void process(){
+    void process(){
 		try {
 			parseTemplate(templateEntry.getCanonicalPath(), database);
 		} catch (IOException e) {
@@ -77,23 +77,7 @@ public class TemplateProcessor {
 		}
 	}
 
-    /**
-     * we can invoke it in template file
-     * @param templatePath
-     * @param model
-     */
-    public void process(String templatePath, Object model){
-		try {
-			String basePath = templateEntry.getParentFile().getCanonicalPath();
-			String path = concatPath(basePath, templatePath);
-			parseTemplate(path, model);
-		} catch (IOException e) {
-			logger.error(e);
-		}
-    }
-
-
-    public String concatPath(String basePath, String path){
+    private String concatPath(String basePath, String path){
         String result = FilenameUtils.concat(basePath, path);
         if(result != null && File.separatorChar == '\\'){
             //make the path linux style
@@ -102,23 +86,35 @@ public class TemplateProcessor {
         return result;
     }
 
-    public String getProperty(String name, String def){
-        String value = System.getProperty("name");
-        if(value == null){
-            value = System.getenv("name");
+    /**
+     * 调用velocity引擎解析模板，忽略生成的内容。
+     * 可以在模板中调用本方法，用来在模板中解析别的模板
+     * @param templateFile 模板路径，相对于.jm.vm文件的路径
+     * @param model 传入模板velocityContext中的对象，以model为key，在模板中可以用$model引用它
+     */
+    public void process(String templateFile, Object model){
+        try {
+            String basePath = templateEntry.getParentFile().getCanonicalPath();
+            String templatePath = concatPath(basePath, templateFile);
+            File template = new File(templatePath);
+            if(!template.exists()){
+                logger.error("template " + templateFile + " not found");
+                return;
+            }
+            parseTemplate(template.getCanonicalPath(), model);
+
+        } catch (IOException e) {
+            logger.error(e);
         }
-        if(value == null){
-            return def;
-        }
-        return value;
     }
 
     /**
-     * we can invoke it in template file
-     * @param templateFile
-     * @param outputFile
-     * @param replaceIfExists
-     * @param model
+     * 调用velocity引擎解析模板，并把解析出的文本，保存至outputFile中
+     * 可以在模板中调用本方法，用来在模板中解析别的模板，并保存至outputFile中
+     * @param templateFile 模板路径，相对于.jm.vm文件的路径
+     * @param outputFile 输出文件路径，相对于.jm.vm文件的路径
+     * @param replaceIfExists 如果outputFile已经存在，是否替换
+     * @param model 传入模板velocityContext中的对象，以model为key，在模板中可以用$model引用它
      */
     public void generate(String templateFile, String outputFile, boolean replaceIfExists, Object model){
 		try {
@@ -129,15 +125,14 @@ public class TemplateProcessor {
 				return;
 			}
 
-			String templatePath = basePath + File.separator + templateFile;
+			String templatePath = concatPath(basePath, templateFile);
 			File template = new File(templatePath);
 			if(!template.exists()){
 				logger.error("template " + templateFile + " not found");
 				return;
 			}
 
-			String absolutePath = template.getCanonicalPath();
-			String content = parseTemplate(absolutePath, model);
+			String content = parseTemplate(template.getCanonicalPath(), model);
 			write(content, output);
 		} catch (IOException e) {
 			logger.error(e);

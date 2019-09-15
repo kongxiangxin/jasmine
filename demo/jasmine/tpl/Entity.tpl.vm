@@ -1,9 +1,13 @@
+## 此时，model是tpl1.jm.vm中传入的cfg
 
 #foreach($table in $model.db.tables)
 
     #set($entityModel = {"table" : $table, "package":$model.package, "modelPkg":$model.modelPkg})
     #set($entityModel.className = ${table.className})
 
+    ##生成xxxxBase.java，如果目标文件存在，替换
     $processor.generate("${model.tplPath}/EntityBase.vm", "${model.targetPath}/${table.className}Base.java", true, $entityModel)
+
+    ##生成xxxx.java，如果目标文件存在，忽略，不替换
     $processor.generate("${model.tplPath}/Entity.vm", "${model.targetPath}/${table.className}.java", false, $entityModel)
 #end
