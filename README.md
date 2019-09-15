@@ -242,9 +242,21 @@ void process(String templateFile, Object model);
 void generate(String templateFile, String outputFile, boolean replaceIfExists, Object model);
 
 ```
-> 注意，模板中调用process或generate方法，会改变上下文中的$model对象
+> 注意，模板中调用process或generate方法，会改变上下文中的$model对象，可以参考demo
 
-#### 使用示例
+## 示例DEMO —— 基于MySQL数据库的MyBatis实体和映射文件生成模板
+Demo文件夹中的模板，是经过<b>精心打磨</b>的、可以直接拿来用于生产的模板，它支持以下特性：
+
+1. 一键生成实体类、MyBatis Repository、MyBatis Mapper
+2. 实体类、MyBatis Repository和MyBatis Mapper均利用继承策略，划分出XXXX和XXXXBase两个文件，其中XXXX如果文件存在则不覆盖，XXXXBase每次生成都会覆盖。
+如果在生成后你需要做一些代码上的调整，请在XXXX文件中修改，而不要在XXXXBase中修改。这样做的好处是一旦我们的表结构发生变化需要重新生成时，不会覆盖您手动改过的代码。
+3. 如果表存在is_deleted字段，生成的delete方法是逻辑删除而不是物理删除
+4，如果表存在record_version字段，update语句带有乐观锁，即update .... set record_version=record_version + 1 where .... and record_version=#{record_version}
+5. 如果表存在create_time，insert语句这一列的值是now()
+6. 如果表存在update_time, insert和update语句这一列的值是now()
+
+入口模板：tpl1.jm.vm
+
 ```
 ##tpl1.jm.vm
 
@@ -319,15 +331,4 @@ public class ${model.className}Base {
 #end  ## ~~ end column to field
 ...
 ```
-
-## 示例DEMO —— 基于MySQL数据库的MyBatis实体和映射文件生成模板
-Demo文件夹中的模板，是经过<b>精心打磨</b>的、可以直接拿来用于生产的模板，它支持以下特性：
-
-1. 一键生成实体类、MyBatis Repository、MyBatis Mapper
-2. 实体类、MyBatis Repository和MyBatis Mapper均利用继承策略，划分出XXXX和XXXXBase两个文件，其中XXXX如果文件存在则不覆盖，XXXXBase每次生成都会覆盖。
-如果在生成后你需要做一些代码上的调整，请在XXXX文件中修改，而不要在XXXXBase中修改。这样做的好处是一旦我们的表结构发生变化需要重新生成时，不会覆盖您手动改过的代码。
-3. 如果表存在is_deleted字段，生成的delete方法是逻辑删除而不是物理删除
-4，如果表存在record_version字段，update语句带有乐观锁，即update .... set record_version=record_version + 1 where .... and record_version=#{record_version}
-5. 如果表存在create_time，insert语句这一列的值是now()
-6. 如果表存在update_time, insert和update语句这一列的值是now()
 
