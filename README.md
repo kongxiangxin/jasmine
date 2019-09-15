@@ -39,7 +39,7 @@ jasmine的配置文件，可用配置项如下：
 | `excludeColumns`  | 排除掉的列名，如果需要排除多个列，用英文字符逗号(,)隔开。排除掉的列，不会读到模型中。 |
 | `fileEncoding`    | 模板文件和生成文件的编码，符合java的charset命名。默认UTF-8 |
 | `typeMapping.xxx` | jdbc的TYPE_NAME -> pojo类型映射。例如typeMapping.bit=Boolean，表示要把JDBCType的BIT类型，映射为Boolean类型。 详情请参考下面的类型映射章节 |
-| `tableNameMapping.xxx`| 原始表名和读到模型中的表名映射关系。默认情况下会以原始表名作为模型中的表名，但特殊情况下需要改变它，比如在数据水平切分（分表）的情况下，一般和classNameMapping配合使用。具体用法可参考示例demo |
+| `tableNameMapping.xxx`| 如果我们把某个大表的数据，分割到多张表中，可利用tableNameMapping和classNameMapping <br> 例如，订单数据量太大，根据订单号hash到10张表里，表名可能是这个样子：order_01、order_02、...、order_10，这10张表的结构完全相同。<br> 我们可以指定tableName，只利用其中一张表作为模型来生成代码，但是如果在模板中不特殊处理的话，生成的实体类名是Order01，生成的sql中的表名是order_01。这显然不是我们想要的结果。 |
 | `classNameMapping.xxx`| 同上 |
 
 示例：
