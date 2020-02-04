@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+    //https://github.com/JetBrains/gradle-intellij-plugin
+    id 'org.jetbrains.intellij' version '0.4.10'
+}
+
+group 'org.yidan'
+version '2.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+dependencies {
+    compile project(':jasmine-core')
+}
+
+intellij {
+    version '2016.1'
+    downloadSources false
+    /**
+     * I want this plugin can compatibility with 14.1+
+     * see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000152064-plugin-is-incompatible-with-this-installation-
+     */
+    updateSinceUntilBuild false
+    sameSinceUntilBuild false
+}
+patchPluginXml {
+    changeNotes "compatibility idea version since 2016.1"
+//    sinceBuild '141'
+}
+//
+//apply plugin: 'application'
+//mainClassName = 'org.yidan.jasmine.Main'

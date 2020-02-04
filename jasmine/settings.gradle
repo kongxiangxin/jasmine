@@ -1,2 +1,3 @@
 rootProject.name = 'jasmine'
 
+include 'jasmine-core'
