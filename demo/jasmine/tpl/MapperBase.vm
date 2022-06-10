@@ -77,6 +77,30 @@ ${rawName.substring(0,1).toLowerCase()}${rawName.substring(1)}##
         </trim>
     </insert>
 
+    <insert id="insertBatch">
+        INSERT INTO
+        <include refid="TableName"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+#foreach($column in $model.table.columns)
+            `${column.name}`,
+#end
+
+        </trim>
+        values
+        <foreach collection="list" item="item" separator =",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+#foreach($column in $model.table.columns)##
+#if($column.name != 'create_time' && $column.name != 'update_time')
+                #{item.${column.fieldName},jdbcType=${column.jdbcType}},
+#end
+#if($column.name == 'create_time' || $column.name == 'update_time')
+                now(),
+#end
+#end
+            </trim>
+        </foreach>
+    </insert>
+
     <select id="selectByPrimaryKey" resultMap="BaseResultMap">
         select
         <include refid="BaseColumnList"/>

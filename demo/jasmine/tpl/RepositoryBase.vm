@@ -52,6 +52,11 @@ public interface ${model.table.className}RepositoryBase{
      */
     int insertSelective(@Param("#name(${model.table.className})") ${model.table.className} #name(${model.table.className}));
 
+    /**
+     * batch insert entity
+     * @param list
+     */
+    void insertBatch(@Param("list") List<${model.table.className}> list);
 
     /**
      *##
